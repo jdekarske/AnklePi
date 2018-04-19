@@ -1,34 +1,36 @@
 package com.jasondekarske.anklepi;
 
-import android.app.ActionBar;
-import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import static java.lang.Boolean.TRUE;
 
-public class Monitor extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Main";
+//    /**
+//     * Preferences
+//     */
+//    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+//    private String sharedPrefFile = "com.example.android.sharedprefs";
     /**
      * String buffer for outgoing messages
      */
@@ -40,13 +42,20 @@ public class Monitor extends AppCompatActivity {
     private BluetoothAdapter mBluetoothAdapter = null;
 
     /**
-     * Member object for the chat services
+     * Member object for the bluetooth services
      */
     private BluetoothService mService = null;
+
+    /**
+     * Widgets
+     */
     private TextView psi1;
     private TextView psi2;
     private EditText mpsi_out;
     private Button mSendButton;
+    private ProgressBar gauge1;
+    private ProgressBar gauge2;
+//    private Integer mWalkPSI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +69,8 @@ public class Monitor extends AppCompatActivity {
         psi2 = (TextView) findViewById(R.id.psi2);
         mpsi_out = (EditText) findViewById(R.id.psi_out);
         mSendButton = (Button) findViewById(R.id.button_send);
+        gauge1 = (ProgressBar) findViewById(R.id.circle_progress_barcyl);
+        gauge2 = (ProgressBar) findViewById(R.id.circle_progress_barres);
 
         mSendButton.setOnClickListener(new View.OnClickListener() {
                                            public void onClick(View v) {
@@ -82,14 +93,11 @@ public class Monitor extends AppCompatActivity {
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         //if bluetooth isn't enabled let them know
         if (!mBluetoothAdapter.isEnabled()) {
+//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             Snackbar.make(findViewById(android.R.id.content), "Enable Bluetooth and restart app", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Action", null).show();
         }
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        mService = new BluetoothService(mHandler);
-
-        // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer("");
     }
 
     @Override
@@ -106,6 +114,8 @@ public class Monitor extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.action_connect:
                 connectDevice();
@@ -116,12 +126,80 @@ public class Monitor extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    private void sendMessage(String message) {
-//        // Check that we're actually connected before trying anything
-//        if (mService.getState() != BluetoothService.STATE_CONNECTED) {
-//            Toast.makeText(R.id.parent, R.string.not_connected, Toast.LENGTH_SHORT).show();
-//            return;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Initialize the BluetoothChatService to perform bluetooth connections
+        Log.d(TAG, "start1");
+        if (mService == null) {
+            mService = new BluetoothService(mHandler);
+            // Initialize the buffer for outgoing messages
+            mOutStringBuffer = new StringBuffer("");
+        } else {
+            Log.d(TAG, "onstart mservice!=null");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "resuming");
+        Log.d(TAG, " " + String.valueOf(mService.getState()));
+
+
+//        if (mService != null) {
+//            if (mService.getState() == BluetoothService.STATE_NONE) {
+//                // Start the Bluetooth chat services
+//                mService.start();
+//            } else {
+//                Log.d(TAG, "onresume mservice not statenone");
+//            }
 //        }
+////        sendSettings();
+//        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "stop " + String.valueOf(mService.getState()));
+
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+//        if (mService != null) {
+//            mService.stop();
+//        }
+
+        Log.d(TAG, "destroy " + String.valueOf(mService.getState()));
+
+    }
+
+    private void sendSettings() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String defaultwalking = sharedPref.getString(SettingsActivity.defaultwalking, "");
+        String defaultsquat = sharedPref.getString(SettingsActivity.defaultsquat, "");
+        String defaultdeadlift = sharedPref.getString(SettingsActivity.defaultdeadlift, "");
+        String defaultpress = sharedPref.getString(SettingsActivity.defaultpress, "");
+        Boolean loglift = sharedPref.getBoolean(SettingsActivity.loglift, false);
+        Boolean logpressure = sharedPref.getBoolean(SettingsActivity.logpressure, false);
+
+        String message = "s" + defaultwalking + "/" + defaultsquat + "/" + defaultdeadlift + "/" + defaultpress + "/"
+                + loglift.toString() + "/" + logpressure.toString();
+        sendMessage(message);
+    }
+
+    private void sendMessage(String message) {
+        // Check that we're actually connected before trying anything
+        if (mService.getState() != BluetoothService.STATE_CONNECTED) {
+            Snackbar.make(findViewById(android.R.id.content), "Connect to your ankle", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Action", null).show();
+            return;
+        }
 
         // Check that there's actually something to send
         if (message.length() > 0) {
@@ -150,6 +228,10 @@ public class Monitor extends AppCompatActivity {
                             break;
                         case BluetoothService.STATE_LISTEN:
                         case BluetoothService.STATE_NONE:
+                            psi1.setText("-");
+                            psi2.setText("-");
+                            gauge1.setProgress(0);
+                            gauge2.setProgress(0);
                             setStatus(R.string.title_not_connected);
                             break;
                     }
@@ -162,11 +244,19 @@ public class Monitor extends AppCompatActivity {
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    String cleaned = readMessage.substring(0,9);
-                    String parsed[] = cleaned.split("/");
-                    psi1.setText(parsed[0]);
-                    psi2.setText(parsed[1]);
+
+                    try {
+                        String readMessage = new String(readBuf, 0, msg.arg1);
+                        String cleaned = readMessage.substring(0, 9);
+                        String parsed[] = cleaned.split("/");
+                        psi1.setText(parsed[0]);
+                        psi2.setText(parsed[1]);
+                        Log.d(TAG,parsed[0]);
+                        gauge1.setProgress(Math.round(Float.parseFloat(parsed[0]))); //really?
+                        gauge2.setProgress(Math.round(Float.parseFloat(parsed[1])));
+                    } catch (IndexOutOfBoundsException e) {
+                        Log.e(TAG, "Receiving parse issue", e);
+                    }
                     break;
 //                case Constants.MESSAGE_DEVICE_NAME:
 //                    // save the connected device's name
@@ -186,7 +276,6 @@ public class Monitor extends AppCompatActivity {
         }
     };
     public void setStatus(int resId) {
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setSubtitle(resId);
     }

@@ -7,7 +7,14 @@
     <string name="title_connected_to">connected</string>
     <string name="title_not_connected">disconnected</string>
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving…</string>
-    <string name="psi2">psi2</string>
-    <string name="psi1">psi1</string>
+    <string name="psi2">-</string>
+    <string name="psi1">-</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="loglift_summary">Record torque, pressure, and angle data for the next lift.</string>
+    <string name="loglift_title">Lift</string>
+    <string name="logpressure_summary">Record pressure change during the next pressure cycle.</string>
+    <string name="logpressure_title">Pressure change</string>
 
 </resources>

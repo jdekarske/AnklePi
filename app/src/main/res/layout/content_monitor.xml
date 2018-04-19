@@ -5,32 +5,106 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.jasondekarske.anklepi.Monitor"
+    tools:context="com.jasondekarske.anklepi.MainActivity"
     tools:showIn="@layout/activity_monitor">
+
+    <ProgressBar
+        android:id="@+id/ProgressBarcyl"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="225dp"
+        android:layout_height="225dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:indeterminate="false"
+        android:max="200"
+        android:progress="178"
+        android:progressDrawable="@drawable/circle_progress_backgroundcyl"
+        android:rotation="110"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/circle_progress_barcyl"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="225dp"
+        android:layout_height="225dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:indeterminate="false"
+        android:max="200"
+        android:progress="2"
+        android:progressDrawable="@drawable/circle_progress_foregroundcyl"
+        android:rotation="110"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ProgressBar
+        android:id="@+id/ProgressBarres"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:indeterminate="false"
+        android:max="200"
+        android:progress="178"
+        android:progressDrawable="@drawable/circle_progress_backgroundres"
+        android:rotation="110"
+        app:layout_constraintBottom_toBottomOf="@+id/ProgressBarcyl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ProgressBarcyl" />
+
+    <ProgressBar
+        android:id="@+id/circle_progress_barres"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:indeterminate="false"
+        android:max="200"
+        android:progress="2"
+        android:progressDrawable="@drawable/circle_progress_foregroundres"
+        android:rotation="110"
+        app:layout_constraintBottom_toBottomOf="@+id/ProgressBarcyl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ProgressBarcyl" />
 
     <TextView
         android:id="@+id/psi1"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginEnd="71dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/psi1"
-        app:layout_constraintEnd_toStartOf="@+id/psi2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="@+id/circle_progress_barcyl"
+        app:layout_constraintEnd_toEndOf="@+id/circle_progress_barcyl"
+        app:layout_constraintStart_toStartOf="@+id/circle_progress_barcyl"
+        app:layout_constraintTop_toTopOf="@+id/circle_progress_barcyl"
+        app:layout_constraintVertical_bias="0.66999996" />
 
     <TextView
         android:id="@+id/psi2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="71dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="@string/psi2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/psi1"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/circle_progress_barres"
+        app:layout_constraintEnd_toEndOf="@+id/circle_progress_barres"
+        app:layout_constraintStart_toStartOf="@+id/circle_progress_barres"
+        app:layout_constraintTop_toTopOf="@+id/circle_progress_barres"
+        app:layout_constraintVertical_bias="0.65999997" />
 
     <EditText
         android:id="@+id/psi_out"
@@ -42,12 +116,14 @@
         android:ems="10"
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/psi1" />
+        app:layout_constraintTop_toBottomOf="@+id/circle_progress_barcyl" />
 
     <Button
         android:id="@+id/button_send"
-        android:layout_width="wrap_content"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="84dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -56,4 +132,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/psi_out" />
+
 </android.support.constraint.ConstraintLayout>

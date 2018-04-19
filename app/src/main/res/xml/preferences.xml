@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <PreferenceCategory android:title="Default Pressures">
+
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="40"
+            android:inputType="number"
+            android:key="defaultwalking"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Walking" />
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="30"
+            android:key="defaultsquat"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Squat" />
+        <EditTextPreference
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:defaultValue="30"
+            android:key="defaultdeadlift"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Deadlift" />
+        <EditTextPreference
+            android:defaultValue="40"
+            android:key="defaultpress"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Press" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Logging">
+
+        <SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:key="loglift_switch"
+            android:summary="@string/loglift_summary"
+            android:title="@string/loglift_title" />
+        <SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="false"
+            android:key="logpressure_switch"
+            android:summary="@string/logpressure_summary"
+            android:title="@string/logpressure_title" />
+    </PreferenceCategory>
+</PreferenceScreen>

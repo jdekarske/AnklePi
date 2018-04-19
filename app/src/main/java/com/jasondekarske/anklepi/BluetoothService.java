@@ -20,7 +20,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -67,12 +66,11 @@ public class BluetoothService {
     public static final int STATE_NONE = 0;       // we're doing nothing
     public static final int STATE_LISTEN = 1;     // now listening for incoming connections
     public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 9;  // I'm not sure why it is 9 when now connected to a remote device
+    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
     /**
      * Constructor. Prepares a new BluetoothChat session.
      *
-     * @param context The UI Activity Context
      * @param handler A Handler to send messages back to the UI Activity
      */
     public BluetoothService(Handler handler) {
@@ -101,6 +99,12 @@ public class BluetoothService {
         return mState;
     }
 
+    public synchronized void setState(int inState) {
+        mState = inState;
+        // Update UI title
+        updateUserInterfaceTitle();
+    }
+
     /**
      * Start the chat service. Specifically start AcceptThread to begin a
      * session in listening (server) mode. Called by the Activity onResume()
@@ -125,10 +129,11 @@ public class BluetoothService {
             mSecureAcceptThread = new AcceptThread(true);
             mSecureAcceptThread.start();
         }
-        if (mInsecureAcceptThread == null) {
-            mInsecureAcceptThread = new AcceptThread(false);
-            mInsecureAcceptThread.start();
-        }
+//        commenting this fixed the app thinking it was connected after trying to open sockets that were closed
+//        if (mInsecureAcceptThread == null) {
+//            mInsecureAcceptThread = new AcceptThread(false);
+//            mInsecureAcceptThread.start();
+//        }
         // Update UI title
         updateUserInterfaceTitle();
     }
@@ -334,12 +339,14 @@ public class BluetoothService {
 
             // Listen to the server socket if we're not connected
             while (mState != STATE_CONNECTED) {
+                Log.d(TAG, "stupid error wtf" + String.valueOf(mState));
                 try {
                     // This is a blocking call and will only return on a
                     // successful connection or an exception
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
                     Log.e(TAG, "Socket Type: " + mSocketType + "accept() failed", e);
+                    mState = STATE_LISTEN;
                     break;
                 }
 
@@ -370,7 +377,7 @@ public class BluetoothService {
 
         }
 
-        private void cancel() {
+        public void cancel() {
             Log.d(TAG, "Socket Type" + mSocketType + "cancel " + this);
             try {
                 mmServerSocket.close();
@@ -447,7 +454,7 @@ public class BluetoothService {
             connected(mmSocket, mmDevice, mSocketType);
         }
 
-        private void cancel() {
+        public void cancel() {
             try {
                 mmSocket.close();
             } catch (IOException e) {
