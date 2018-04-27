@@ -16,5 +16,10 @@
     <string name="loglift_title">Lift</string>
     <string name="logpressure_summary">Record pressure change during the next pressure cycle.</string>
     <string name="logpressure_title">Pressure change</string>
-
+    <string-array name="exercises_array">
+        <item>Select an exercise…</item>
+        <item>Squat</item>
+        <item>Deadlift</item>
+        <item>Press</item>
+    </string-array>
 </resources>

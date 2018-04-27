@@ -16,15 +16,18 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import static java.lang.Boolean.TRUE;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private static final String TAG = "Main";
 //    /**
 //     * Preferences
@@ -55,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private Button mSendButton;
     private ProgressBar gauge1;
     private ProgressBar gauge2;
+    private Spinner spinner;
+    private Toolbar toolbar;
 //    private Integer mWalkPSI;
 
     @Override
@@ -62,8 +67,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitor);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        spinner = (Spinner) findViewById(R.id.exercise_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.exercises_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
 
         psi1 = (TextView) findViewById(R.id.psi1);
         psi2 = (TextView) findViewById(R.id.psi2);
@@ -75,18 +88,20 @@ public class MainActivity extends AppCompatActivity {
         mSendButton.setOnClickListener(new View.OnClickListener() {
                                            public void onClick(View v) {
                                                // Send a message using content of the number picker widget
-                                               String message = mpsi_out.getText().toString();
+                                               String message = "c" + ":" + mpsi_out.getText().toString() + ":";
                                                sendMessage(message);
                                            }
                                        }
         );
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.walkfab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                String message = "m:w:"; //mode ->walk
+                sendMessage(message);
             }
         });
         //bluetooth nonsense
@@ -98,6 +113,29 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(findViewById(android.R.id.content), "Enable Bluetooth and restart app", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Action", null).show();
         }
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        String message;
+        switch(pos) {
+            case 1:
+                message = "m:s:";
+                sendMessage(message);
+                break;
+            case 2:
+                message = "m:d:";
+                sendMessage(message);
+                break;
+            case 3:
+                message = "m:p:";
+                sendMessage(message);
+                break;
+        }
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
     }
 
     @Override
@@ -145,19 +183,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "resuming");
-        Log.d(TAG, " " + String.valueOf(mService.getState()));
-
-
-//        if (mService != null) {
-//            if (mService.getState() == BluetoothService.STATE_NONE) {
-//                // Start the Bluetooth chat services
-//                mService.start();
-//            } else {
-//                Log.d(TAG, "onresume mservice not statenone");
-//            }
+        if (mService != null) {
+            sendSettings();
 //        }
-////        sendSettings();
-//        }
+        }
     }
 
     @Override
@@ -188,15 +217,15 @@ public class MainActivity extends AppCompatActivity {
         Boolean loglift = sharedPref.getBoolean(SettingsActivity.loglift, false);
         Boolean logpressure = sharedPref.getBoolean(SettingsActivity.logpressure, false);
 
-        String message = "s" + defaultwalking + "/" + defaultsquat + "/" + defaultdeadlift + "/" + defaultpress + "/"
-                + loglift.toString() + "/" + logpressure.toString();
+        String message = "s" + ":" + defaultwalking + "/" + defaultsquat + "/" + defaultdeadlift + "/" + defaultpress + "/"
+                + loglift.toString() + "/" + logpressure.toString() + ":";
         sendMessage(message);
     }
 
     private void sendMessage(String message) {
         // Check that we're actually connected before trying anything
         if (mService.getState() != BluetoothService.STATE_CONNECTED) {
-            Snackbar.make(findViewById(android.R.id.content), "Connect to your ankle", Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(findViewById(android.R.id.content), "Connect to your ankle", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
             return;
         }
