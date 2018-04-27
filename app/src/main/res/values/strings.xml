@@ -5,7 +5,9 @@
     <string name="not_connected">You are not connected to a device</string>
     <string name="title_connecting">connecting…</string>
     <string name="title_connected_to">connected</string>
-    <string name="title_not_connected">disconnected</string>
+    <!--nope-->
+    <string name="title_not_connected">connected</string>
+    <!--nope-->
     <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving…</string>
     <string name="psi2">-</string>
     <string name="psi1">-</string>

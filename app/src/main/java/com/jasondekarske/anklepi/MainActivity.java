@@ -113,6 +113,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Snackbar.make(findViewById(android.R.id.content), "Enable Bluetooth and restart app", Snackbar.LENGTH_INDEFINITE)
                     .setAction("Action", null).show();
         }
+        psi1.setText("34.5");
+        psi2.setText("148.3");
+        gauge1.setProgress(34);
+        gauge2.setProgress(148);
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
